@@ -14,26 +14,28 @@ root.withdraw()
 # For identyfing the system - Clear Screen order
 os.system('cls' if os.name == 'nt' else 'clear')
 
-print('Please select a Bookmarks file to clean: ')
-in_file = fd.askopenfilename()
+in_file = fd.askopenfilename(title='File to clean')
 
-print('Please select a Target file: ')
-out_file = fd.askopenfilename()
+out_file = fd.askopenfilename(title='Target file')
 
 soup = BeautifulSoup(codecs.open(in_file, encoding='utf-8'), "html.parser")
-
+bookmarks_counter = {'goodone':0, 'deadone':0, 'expired':0}
 with open(out_file, "w", encoding='utf-8') as o_file:
     def fetch_href(a):
         try:
             x = requests.get(a['href'])
             if x.status_code == 200:
-                print('found One')
-                o_file.write(f"<a href=\"{a['href']}\">{a.text}</a><br>")
+                bookmarks_counter['goodone'] += 1
+                o_file.write(f"<a href=\"{a['href']}\" target=\"_blank\">{a.text}</a><br>")
+                print('.', end='')
             else:
-                print('A dead one')
+                bookmarks_counter['deadone'] += 1
+                print('\n')
         except (requests.exceptions.Timeout, requests.exceptions.HTTPError,
                 requests.exceptions.ConnectionError, requests.exceptions.InvalidSchema):
-            print('Excepted 1')
+            bookmarks_counter['expired'] += 1
+            print('\t')
     all_a = soup.find_all('a')
     with ThreadPool(20) as pool:
         pool.map(fetch_href, all_a, chunksize=1)
+print(bookmarks_counter)
