@@ -26,7 +26,7 @@ with open(out_file, "w", encoding='utf-8') as o_file:
             x = requests.get(a['href'])
             if x.status_code == 200:
                 bookmarks_counter['goodone'] += 1
-                o_file.write(f"<a href=\"{a['href']}\" target=\"_blank\">{a.text}</a><br>")
+                o_file.write(f"<a href=\"{a['href']}\" target=\"_blank\">{bookmarks_counter['goodone']}. {a.text}</a><br>")
                 print('.', end='')
             else:
                 bookmarks_counter['deadone'] += 1
@@ -36,6 +36,9 @@ with open(out_file, "w", encoding='utf-8') as o_file:
             bookmarks_counter['expired'] += 1
             print('\t')
     all_a = soup.find_all('a')
+    print(len(all_a))
     with ThreadPool(20) as pool:
         pool.map(fetch_href, all_a, chunksize=1)
+
+
 print(bookmarks_counter)
