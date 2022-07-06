@@ -24,7 +24,7 @@ good_bookmarks = []
 with open(out_file, "w", encoding='utf-8') as o_file:
     def fetch_href(a):
         try:
-            x = requests.get(a['href'])
+            x = requests.get(a['href'], timeout=10)
             if x.status_code == 200:
                 good_bookmarks.append(a['href'])
                 bookmarks_counter['goodone'] += 1
