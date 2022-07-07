@@ -23,7 +23,7 @@ bookmarks_counter = {'goodone':0, 'deadone':0, 'expired':0}
 with open(out_file, "w", encoding='utf-8') as o_file:
     def fetch_href(a):
         try:
-            x = requests.get(a['href'])
+            x = requests.get(a['href'],timeout=15)
             if x.status_code == 200:
                 bookmarks_counter['goodone'] += 1
                 o_file.write(f"<a href=\"{a['href']}\" target=\"_blank\">{bookmarks_counter['goodone']}. {a.text}</a><br>")
